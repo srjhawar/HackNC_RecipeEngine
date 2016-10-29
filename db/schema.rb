@@ -11,10 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161029163710) do
+ActiveRecord::Schema.define(version: 20161029193420) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "articles", force: :cascade do |t|
+    t.text    "title",           null: false
+    t.integer "author_id",       null: false
+    t.integer "cuisine_id"
+    t.string  "time_to_prepare"
+    t.text    "content"
+  end
+
+  add_index "articles", ["cuisine_id"], name: "index_articles_on_cuisine_id", using: :btree
+  add_index "articles", ["time_to_prepare"], name: "index_articles_on_time_to_prepare", using: :btree
+  add_index "articles", ["title"], name: "index_articles_on_title", using: :btree
+
+  create_table "cuisines", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
+  add_index "cuisines", ["name"], name: "index_cuisines_on_name", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
@@ -29,9 +47,23 @@ ActiveRecord::Schema.define(version: 20161029163710) do
     t.inet     "last_sign_in_ip"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
+    t.string   "name"
+    t.string   "country"
+    t.string   "phone"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+  add_index "users", ["name"], name: "index_users_on_name", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+
+  create_table "votes", force: :cascade do |t|
+    t.integer "entity_id",   null: false
+    t.string  "entity_type", null: false
+    t.integer "user_id",     null: false
+  end
+
+  add_index "votes", ["entity_id"], name: "index_votes_on_entity_id", using: :btree
+  add_index "votes", ["entity_type"], name: "index_votes_on_entity_type", using: :btree
+  add_index "votes", ["user_id"], name: "index_votes_on_user_id", using: :btree
 
 end
